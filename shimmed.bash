@@ -118,7 +118,8 @@ function shimmed ()
             declare -p ${!SHIMMED*}
     } 1>&2
 
-    [ "${fnc_debug:-0}" -lt 2 ] && run=( . ) || run=( printf '. %s\n' )
+    #[ "${fnc_debug:-0}" -lt 2 ] && run=( . ) || run=( printf '. %s\n' )
+    run=( . )
 
     [ "${fnc_debug:-0}" -lt 1 ] || "${fnc_msg[@]}" "HEAD.." 1>&2
 
@@ -133,19 +134,17 @@ function shimmed ()
 
     [ "${fnc_debug:-0}" -lt 1 ] || declare -p SHIMMED_ARGS SHIMMED_EXEC 1>&2
 
-    [ "${fnc_debug:-0}" -lt 2 ] && {
-        [ "${#SHIMMED_HIND[@]}" -gt 0 ] \
-            && run=() \
-            || run=( exec )
-    } || {
-        [ "${#SHIMMED_HIND[@]}" -gt 0 ] \
-            && run=( printf '%s\n' ) \
-            || run=( printf 'exec %s\n' )
+    [ "${#SHIMMED_HIND[@]}" -gt 0 ] \
+        && run=() \
+        || run=( exec )
+
+    [ "${fnc_debug:-0}" -lt 1 ] || {
+        "${fnc_msg[@]}" "RUN.." 1>&2
+        echo "${run[@]}" "${SHIMMED_EXEC[@]}" "${SHIMMED_ARGS[@]}"
     }
 
-    [ "${fnc_debug:-0}" -lt 1 ] || "${fnc_msg[@]}" "RUN.." 1>&2
-
-    "${run[@]}" "${SHIMMED_EXEC[@]}" "${SHIMMED_ARGS[@]}"
+    [ "${fnc_debug:-0}" -ge 2 ] \
+        || "${run[@]}" "${SHIMMED_EXEC[@]}" "${SHIMMED_ARGS[@]}"
 
     fnc_return="${?}"
 
@@ -153,7 +152,8 @@ function shimmed ()
 
     [ "${fnc_debug:-0}" -lt 1 ] || declare -p fnc_return 1>&2
 
-    [ "${fnc_debug:-0}" -lt 2 ] && run=( . ) || run=( printf '%s\n' )
+    #[ "${fnc_debug:-0}" -lt 2 ] && run=( . ) || run=( printf '%s\n' )
+    run=( . )
 
     [ "${fnc_debug:-0}" -lt 1 ] || "${fnc_msg[@]}" "HIND.." 1>&2
 
